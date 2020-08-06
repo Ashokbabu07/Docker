@@ -1,0 +1,12 @@
+FROM gcr.io/cloud-marketplace/google/ubuntu1804:latest
+COPY jaeger-1.18.0-linux-amd64.tar.gz /tmp
+RUN cd /tmp && tar -xvf jaeger-1.18.0-linux-amd64.tar.gz && rm jaeger-1.18.0-linux-amd64.tar.gz
+ARG USER="efx_container_user"
+RUN adduser --home /home/${USER} --gecos "" --disabled-password --uid 1000 ${USER} \
+  && mkdir -p /home/${USER}/.m2 \
+  && chown ${USER}:${USER} /home/${USER} -R
+USER ${USER}
+RUN cd /tmp/jaeger-1.18.0-linux-amd64 && cp -R /tmp/jaeger-1.18.0-linux-amd64/*   /home/${USER}
+RUN /home/${USER}/example-hotrod
+CMD ["all"]
+
